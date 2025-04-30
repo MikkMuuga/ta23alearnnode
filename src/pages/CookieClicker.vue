@@ -1,14 +1,12 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
-// Game state
 let cookies = ref(0);
 let totalCookiesBaked = ref(0);
 let showAchievement = ref(false);
 let currentAchievement = ref({});
 let achievementQueue = ref([]);
 
-// Buildings
 let buildings = ref([
     { name: 'Cursor', price: 15, count: 0, cps: 5, icon: '👆' },
     { name: 'Grandma', price: 100, count: 0, cps: 100, icon: '👵' },
@@ -20,7 +18,6 @@ let buildings = ref([
     { name: 'Wizard Tower', price: 330000000, count: 0, cps: 44000, icon: '🧙' },
 ]);
 
-// Achievements
 let achievements = ref([
     { id: 'firstClick', name: 'First Click', description: 'Click the cookie for the first time', earned: false, condition: () => totalClicks.value >= 1 },
     { id: 'tenClicks', name: 'Cookie Beginner', description: 'Click the cookie 10 times', earned: false, condition: () => totalClicks.value >= 10 },
@@ -35,16 +32,16 @@ let achievements = ref([
     { id: 'firstFarm', name: 'Farmer', description: 'Build your first farm', earned: false, condition: () => buildings.value[2].count >= 1 },
 ]);
 
-// Stats
+
 let totalClicks = ref(0);
 let earnedAchievements = computed(() => achievements.value.filter(a => a.earned).length);
 
-// Calculate cookies per second
+
 let cps = computed(() => {
     return buildings.value.reduce((total, building) => total + building.cps * building.count, 0);
 });
 
-// Main game loop
+
 const cpsInterval = setInterval(() => {
     const cookiesGenerated = cps.value / 10;
     cookies.value += cookiesGenerated;
@@ -53,7 +50,6 @@ const cpsInterval = setInterval(() => {
     checkAchievements();
 }, 100);
 
-// Helper function to format large numbers
 function formatNumber(num) {
     if (num >= 1000000000) {
         return (num / 1000000000).toFixed(1) + ' billion';
@@ -94,12 +90,9 @@ function showNextAchievement() {
     if (achievementQueue.value.length > 0) {
         currentAchievement.value = achievementQueue.value.shift();
         showAchievement.value = true;
-        
-        // Close achievement notification after 3 seconds
         setTimeout(() => {
             showAchievement.value = false;
-            
-            // Check for next achievement in queue after a short delay
+        
             setTimeout(() => {
                 if (achievementQueue.value.length > 0) {
                     showNextAchievement();
